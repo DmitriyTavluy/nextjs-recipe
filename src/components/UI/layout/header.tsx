@@ -1,4 +1,5 @@
 'use client';
+import { layoutConfig } from '@/config/layout.config';
 import { siteConfige } from '@/config/site.config';
 import {
   Navbar,
@@ -11,6 +12,9 @@ import {
 
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import RegistrationModal from '../modals/registration.modal';
+import LoginModal from '../modals/login.modal';
 
 export const Logo = () => {
   return (
@@ -25,6 +29,9 @@ export const Logo = () => {
 };
 
 export default function Header() {
+  const [isRegistrationModalOpen, setIsRegistrationModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
   const pathname = usePathname();
   const getNavItems = () => {
     return siteConfige.navItems.map((item) => {
@@ -46,7 +53,7 @@ export default function Header() {
     });
   };
   return (
-    <Navbar suppressHydrationWarning>
+    <Navbar style={{ height: layoutConfig.headerHeight }}>
       <NavbarBrand>
         <Link href="/" className="flex gap-1">
           <Logo />
@@ -58,14 +65,36 @@ export default function Header() {
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem className="hidden lg:flex">
-          <Link href="#">Логин</Link>
+          <Button
+            as={Link}
+            color="secondary"
+            href="#"
+            variant="flat"
+            onPress={() => setIsLoginModalOpen(true)}
+          >
+            Войти
+          </Button>
         </NavbarItem>
         <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
+          <Button
+            as={Link}
+            color="primary"
+            href="#"
+            variant="flat"
+            onPress={() => setIsRegistrationModalOpen(true)}
+          >
             Регистрация
           </Button>
         </NavbarItem>
       </NavbarContent>
+      <RegistrationModal
+        isOpen={isRegistrationModalOpen}
+        onClose={() => setIsRegistrationModalOpen(false)}
+      />
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+      />
     </Navbar>
   );
 }

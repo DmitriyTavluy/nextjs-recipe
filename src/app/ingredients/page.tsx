@@ -1,7 +1,7 @@
 import React from 'react';
 
-const IngredientsPage = () => {
+const Ingredients = () => {
   return <div>Ингредиенты</div>;
 };
 
-export default IngredientsPage;
+export default Ingredients;
