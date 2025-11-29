@@ -5,6 +5,8 @@ import Header from '@/components/UI/layout/header';
 import { Providers } from '@/providers/provider';
 import { siteConfige } from '@/config/site.config';
 import { layoutConfig } from '@/config/layout.config';
+import { SessionProvider } from 'next-auth/react';
+import { auth } from '@/auth/auth';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -21,11 +23,13 @@ export const metadata: Metadata = {
   description: siteConfige.description,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="en">
       <body
@@ -33,23 +37,25 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <Providers>
-          <Header />
-          <main
-            className={`flex flex-cal 
+          <SessionProvider session={session}>
+            <Header />
+            <main
+              className={`flex flex-cal 
               w-full justify-start items-center`}
-            style={{
-              height: `calc(100vh - ${layoutConfig.headerHeight} - ${layoutConfig.footerHeight}`,
-            }}
-          >
-            {children}
-          </main>
-          <footer
-            className={`flex 
+              style={{
+                height: `calc(100vh - ${layoutConfig.headerHeight} - ${layoutConfig.footerHeight}`,
+              }}
+            >
+              {children}
+            </main>
+            <footer
+              className={`flex 
               justify-center items-center`}
-            style={{ height: layoutConfig.footerHeight }}
-          >
-            {siteConfige.description}
-          </footer>
+              style={{ height: layoutConfig.footerHeight }}
+            >
+              {siteConfige.description}
+            </footer>
+          </SessionProvider>
         </Providers>
       </body>
     </html>
