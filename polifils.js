@@ -1,3 +1,4 @@
+//next.js hero.ui prisma ORM AuthJS zod bcryptjs
 let arr = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 Array.prototype.myForEach = function (callback, thisArg) {
@@ -271,3 +272,60 @@ const stringJoin = (delimiter, ...args) => {
 };
 
 //console.log(stringJoin('.', 'a', 'b', 'c'));
+
+async function waitAll(promises) {
+  const results = [];
+
+  for (let i = 0; i < promises.length; i++) {
+    const res = await promises[i];
+    results.push(res);
+  }
+
+  return results;
+}
+
+async function retry(fn, attempts) {
+  let lastError;
+
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn(); // если успешно — возвращаем результат
+    } catch (err) {
+      lastError = err; // сохраняем ошибку
+      // если это последняя попытка — выбрасываем
+      if (i === attempts - 1) {
+        throw lastError;
+      }
+      // иначе продолжаем цикл и пробуем снова
+    }
+  }
+}
+
+function createEventLoop() {
+  const microTasksQueue = [];
+  const macroTasksQueue = [];
+  return {
+    microtask(fn) {
+      microTasksQueue.push(fn);
+    },
+    macrotask(fn) {
+      macroTasksQueue.push(fn);
+    },
+    run() {
+      while (microTasksQueue.length > 0 || macroTasksQueue.length > 0) {
+        while (microTasksQueue.length > 0) {
+          const micro = microTasksQueue.shift();
+          micro();
+        }
+        if (macroTasksQueue.length > 0) {
+          const macro = macroTasksQueue.shift();
+          macro();
+        }
+      }
+    },
+  };
+}
+
+const loopFunc = (funcs) => {
+  Promise.all(funcs);
+};
